@@ -1,0 +1,34 @@
+body {
+  position: relative;
+}
+
+.row {
+  padding: 1rem 0;
+}
+
+.row::after,
+.row::before {
+  content: '';
+  display: table;
+}
+
+.row::after {
+  clear: both;
+}
+
+canvas {
+  border: 1px dotted #000;
+  float: left;
+  margin-left: 2rem;
+}
+
+#colorBox {
+  display: flex;
+  width: 200px;
+  height: 50px;
+  color: #ffffff;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  border: 1px solid #000;
+}

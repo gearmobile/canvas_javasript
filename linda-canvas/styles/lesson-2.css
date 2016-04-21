@@ -1,0 +1,25 @@
+canvas {
+  float: left;
+  border: 1px dotted #333;
+  margin: 2px;
+}
+
+
+/* HIDE VIDEO */
+
+video {
+  display: none;
+}
+
+/* MOUSE EVENTS IN CANVAS */
+
+.row {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 1rem 0;
+}

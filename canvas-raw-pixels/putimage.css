@@ -1,0 +1,12 @@
+#canvas {
+  border: 1px solid #000;
+}
+
+.controls {
+  clear: both;
+}
+
+.controls > button {
+  cursor: pointer;
+  text-transform: capitalize;
+}
