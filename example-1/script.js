@@ -1,102 +1,62 @@
-/**
- * Created by zencoder on 4/21/16.
- */
-
-var canvas;
-var ctxCanvas;
-var frames = 30;
-
+var ctx;
 var ballX = 50;
 var ballY = 50;
+var ballStepX = 5;
+var ballStepY = 7;
 var ballRadius = 10;
-var ballSpeedX = 5;
-var ballSpeedY = 10;
-
+var mouseX;
 var paddleWidth = 100;
 var paddleHeight = 10;
-var paddleOffset = 20;
-var paddleX = null;
-var paddleY = null;
+var paddleOffset = 40;
+var frames = 30;
 
-function updateMousePosition(event) {
-  var root = document.documentElement;
-  var rect = canvas.getBoundingClientRect();
-  var mouseX = event.clientX - rect.left - root.scrollLeft;
-  //var mouseY = event.clientY - rect.top - root.scrollTop;
-  paddleX = mouseX;
-  //paddleY = mouseY;
-}
 
-function ballReset() {
-  ballX = canvas.width / 2;
-  ballY = canvas.height / 2
-}
-
-function moveAll() {
-
-  var paddleTopEdge = canvas.height - (paddleHeight + paddleOffset);
-  var paddleBottomEdge = paddleTopEdge + paddleHeight;
-  var paddleLeftEdge = paddleX;
-  var paddleRightEdge = paddleLeftEdge + paddleWidth;
-
-  ballX += ballSpeedX;
-  ballY += ballSpeedY;
-
-  if ( ballX > canvas.width || ballX < 0 ) {
-    ballSpeedX *= -1;
-  }
-  if ( ballY < 0 ) {
-    ballSpeedY *= -1;
-  }
-  if ( ballX + ballRadius > paddleLeftEdge &&
-       ballX + ballRadius < paddleRightEdge &&
-       ballY + ballRadius > paddleTopEdge &&
-       ballY + ballRadius < paddleBottomEdge ) {
-    ballSpeedY *= -1;
-  }
-  if ( ballY > canvas.height ) {
-    ballReset();
-  }
-
-}
-
-function drawRect(topLeftX, topLeftY, boxWidth, boxHeight, boxColor) {
-  ctxCanvas.fillStyle = boxColor;
-  ctxCanvas.fillRect(topLeftX, topLeftY, boxWidth, boxHeight);
-}
-
-function drawCircle(circleX, circleY, circleRadius, circleColor) {
-  ctxCanvas.fillStyle = circleColor;
-  ctxCanvas.beginPath();
-  ctxCanvas.arc(circleX, circleY, circleRadius, 0, 360*Math.PI/180, true);
-  ctxCanvas.fill();
-  ctxCanvas.closePath();
-}
-
-function drawAll() {
-  drawRect(0, 0, canvas.width, canvas.height, '#000');
-  drawCircle(ballX, ballY, ballRadius, '#f00');
-  drawRect(paddleX - paddleWidth/2, canvas.height - (paddleHeight + paddleOffset), paddleWidth, paddleHeight, '#fff');
-}
-
-function updateAll() {
-  moveAll();
-  drawAll();
-}
 
 window.addEventListener('DOMContentLoaded', function () {
 
-  canvas = document.querySelector('canvas');
-  ctxCanvas = canvas.getContext('2d');
+  ctx = document.querySelector('#canvas').getContext('2d');
 
-  if ( ctxCanvas ) {
+  if ( ctx ) {
 
-    canvas.width = 800;
-    canvas.height = 400;
+    ctx.canvas.width = 800;
+    ctx.canvas.height = 400;
 
-    setInterval(updateAll, 1000/frames);
+    ctx.canvas.addEventListener('mousemove', function (event) {
+      mouseX = event.clientX - ctx.canvas.getBoundingClientRect().left - document.documentElement.scrollLeft;
+    }, false);
 
-    canvas.addEventListener('mousemove', updateMousePosition);
+    setInterval(function () {
+
+      ballX += ballStepX;
+      ballY += ballStepY;
+
+      if ( ballX < 0 || ballX > ctx.canvas.width ) {
+        ballStepX *= -1;
+      }
+      if ( ballY < 0 || ballY > ctx.canvas.height ) {
+        ballStepY *= -1;
+      }
+      if ( ballX+ballRadius > mouseX &&
+        ballX+ballRadius < mouseX+paddleWidth &&
+        ballY+ballRadius > ctx.canvas.height-paddleOffset-paddleHeight &&
+        ballY+ballRadius < ctx.canvas.height-paddleOffset ) {
+        ballStepY *= -1;
+      }
+
+      ctx.fillStyle = '#000';
+      ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);
+
+      ctx.fillStyle = '#f00';
+      ctx.beginPath();
+      ctx.arc(ballX,ballY,ballRadius,0,360*Math.PI/180,true);
+      ctx.fill();
+      ctx.closePath();
+
+      ctx.fillStyle = '#00f';
+      ctx.fillRect(mouseX,ctx.canvas.height-paddleOffset-paddleHeight, paddleWidth, paddleHeight);
+
+    }, 1000/frames);
+
   }
 
-});
+}, false);
