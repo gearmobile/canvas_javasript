@@ -1,13 +1,12 @@
 /**
- * Created by zencoder on 4/26/16.
+ * Created by zencoder on 26/04/16.
  */
 
-var canvas;
-var ctx;
+var canvas = null;
+var ctx = null;
+var mouseX = null;
 
 var frames = 24;
-var mouseX = null;
-var paddleX = null;
 
 var ballX = 50;
 var ballY = 50;
@@ -15,87 +14,81 @@ var ballStepX = 5;
 var ballStepY = 6;
 var ballRadius = 10;
 
+var paddleX = null;
 var paddleWidth = 100;
 var paddleHeight = 10;
 var paddleOffset = 40;
 
-function mouseCoord (event) {
-    var canvasOffset = canvas.getBoundingClientRect();
-    var htmlDocument = document.documentElement;
-    mouseX = event.clientX - canvasOffset.left - htmlDocument.scrollLeft;
-    paddleX = mouseX - paddleWidth/2;
+function mouseCoords (event) {
+  var canvasOffset = canvas.getBoundingClientRect();
+  var htmlElement = document.documentElement;
+  mouseX = event.clientX - canvasOffset.left - htmlElement.scrollLeft;
+  paddleX = mouseX - paddleWidth/2;
 }
 
-function drawRect (boxX, boxY, boxWidth, boxHeight, boxFillColor) {
-    ctx.fillStyle = boxFillColor;
-    ctx.fillRect(boxX, boxY, boxWidth, boxHeight);
+function drawRect (leftX, leftY, boxWidth, boxHeight, boxFillColor) {
+  ctx.fillStyle = boxFillColor;
+  ctx.fillRect(leftX, leftY, boxWidth, boxHeight);
 }
 
-function drawBall (centerX, centerY, radius, fillColor) {
-    ctx.fillStyle = fillColor;
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, radius, 0, 360*Math.PI/180, true);
-    ctx.fill();
-    ctx.closePath()
+function drawBall(centerX, centerY, radius, fillColor) {
+  ctx.fillStyle = fillColor;
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, radius, 0, 360*Math.PI/180, true);
+  ctx.fill();
+  ctx.closePath();
 }
 
-function drawAll () {
-    drawRect(0, 0, canvas.width, canvas.height, '#000');
-    drawBall(ballX, ballY, ballRadius, 'firebrick');
-    drawRect(paddleX, canvas.height - paddleOffset, paddleWidth, paddleHeight, 'whitesmoke');
+function drawAll() {
+  drawRect(0, 0, canvas.width, canvas.height, '#000');
+  drawBall(ballX, ballY, ballRadius, 'firebrick');
+  drawRect(paddleX, canvas.height - paddleOffset, paddleWidth, paddleHeight, '#fff');
 }
 
-function moveAll () {
+function moveAll() {
 
-    ballX += ballStepX;
-    ballY += ballStepY;
+  var paddleLeftEdge = paddleX;
+  var paddleRightEdge = paddleLeftEdge + paddleWidth;
+  var paddleTopEdge = canvas.height - paddleOffset;
+  var paddleBottomEdge = paddleTopEdge + paddleHeight;
 
-    if ( ballX < 0 || ballX > canvas.width ) {
-        ballStepX *= -1;
-    }
-    if ( ballY < 0 || ballY > canvas.height ) {
-        ballStepY *= -1;
-    }
+  ballX += ballStepX;
+  ballY += ballStepY;
 
-    var paddleTopEdge = canvas.height - paddleOffset;
-    var paddleBottomEdge = paddleTopEdge + paddleHeight;
-    var paddleLeftEdge = paddleX;
-    var paddleRightEdge = paddleX + paddleWidth;
+  if ( ballX < 0 || ballX > canvas.width) {
+    ballStepX *= -1;
+  }
+  if ( ballY < 0 || ballY > canvas.height ) {
+    ballStepY *= -1;
+  }
+  if ( ballX > paddleLeftEdge && ballX < paddleRightEdge && ballY > paddleTopEdge && ballY < paddleBottomEdge ) {
+    ballStepY *= -1;
+    var paddleCenter = paddleLeftEdge + paddleWidth/2;
+    var ballDistance = ballX - paddleCenter;
+    ballStepX = ballDistance * 0.35;
+  }
 
-    if ( ballX + ballRadius > paddleLeftEdge &&
-        ballX + ballRadius < paddleRightEdge &&
-        ballY + ballRadius > paddleTopEdge &&
-        ballY + ballRadius < paddleBottomEdge ) {
-        ballStepY *= -1;
-        var paddleCenter = mouseX + paddleWidth/2;
-        var ballXDistance = ballX - paddleCenter;
-        ballStepX = ballXDistance * 0.35;
-    }
 }
 
-function updateAll () {
+function updateAll() {
+  setInterval( function () {
     moveAll();
     drawAll();
+  }, 1000/frames);
 }
 
 window.addEventListener('DOMContentLoaded', function () {
 
-    canvas = document.querySelector('#canvas');
-    ctx = canvas.getContext('2d');
+  canvas = document.querySelector('#canvas');
+  ctx = canvas.getContext('2d');
 
-    if ( ctx ) {
+  if ( ctx ) {
 
-        canvas.width = 800;
-        canvas.height = 500;
+    canvas.width = 800;
+    canvas.height = 400;
 
-        setInterval( function () {
+    updateAll();
+    canvas.addEventListener('mousemove', mouseCoords, false);
 
-            updateAll();
-
-        }, 1000/frames);
-
-        canvas.addEventListener('mousemove', mouseCoord, false);
-
-    }
-
+  }
 }, false);
