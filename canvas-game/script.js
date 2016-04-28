@@ -24,14 +24,6 @@ const BRICK_HEIGHT = 40;
 const BRICK_COUNT = 8;
 var brickGrid = new Array(BRICK_COUNT);
 
-
-function brickReset() {
-  for ( var i = 0; i < BRICK_COUNT; i++ ) {
-    brickGrid[i] = true;
-  }
-  brickGrid[0] = false;
-}
-
 function mouseCoords (event) {
   var canvasOffset = canvas.getBoundingClientRect();
   var htmlElement = document.documentElement;
@@ -60,21 +52,11 @@ function drawText(textX, textY, textColor) {
   ctx.fillText(message, textX, textY);
 }
 
-//function drawBricks(brickX, brickY, brickWidth, brickHeight, brickColor) {
-//  brickX = 0;
-//  brickY = 0;
-//  for ( var i = 0; i < BRICK_COUNT; i++ ) {
-//    ctx.fillStyle = brickColor;
-//    //brickX += brickWidth + 1;
-//    if ( brickX > canvas.width ) {
-//      brickX = 0;
-//      brickY += brickHeight + 1;
-//    }
-//    if ( bricksArray[i] ) {brickX += brickWidth + 1;
-//      ctx.fillRect(brickX, brickY, brickWidth, brickHeight);
-//    }
-//  }
-//}
+function brickReset() {
+  for ( var i = 0; i < BRICK_COUNT; i++ ) {
+    brickGrid[i] = Math.random() < 0.5 ? true : false;
+  }
+}
 
 function drawBrick () {
   for ( var i = 0; i < BRICK_COUNT; i++ ) {
