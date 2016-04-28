@@ -54,7 +54,7 @@ function drawText(textX, textY, textColor) {
 
 function brickReset() {
   for ( var i = 0; i < BRICK_COUNT; i++ ) {
-    brickGrid[i] = Math.random() < 0.5 ? true : false;
+    brickGrid[i] = Math.random() < 0.5;
   }
 }
 
